@@ -101,12 +101,13 @@ function copyToClipboard() {
 /**
  * メイン処理: 入力情報を収集してAPIへ送信
  */
+// --- メイン処理: 入力情報を収集してAPIへ送信 ---
 async function generateMinutes() {
     const btn = document.getElementById('generate-btn');
     const resultSection = document.getElementById('result-section');
     const outputText = document.getElementById('output-text');
 
-    // 1. バリデーション
+    // 1. バリデーション (ここが最初)
     const vttText = await getVttText();
     if (!vttText) {
         alert('文字起こしデータ(VTT)を入力またはアップロードしてください。');
@@ -118,7 +119,7 @@ async function generateMinutes() {
     btn.innerText = '議事録を生成中... (約30〜60秒)';
 
     try {
-        // --- データ収集 ---
+        // ★ここからデータ収集を開始！★
         const meetingDate = document.getElementById('meeting-date').value;
         const agendas = Array.from(document.querySelectorAll('.agenda-item'))
                             .map(input => input.value.trim())
@@ -137,7 +138,6 @@ async function generateMinutes() {
         // 社外(Client/Vendor)メンバーの収集
         document.querySelectorAll('.external-org-block').forEach(block => {
             const orgName = block.querySelector('.org-name-input').value.trim() || '社外';
-            // 組織名に "Client" が含まれる場合は Client、それ以外は Vendor と判定
             const type = orgName.toLowerCase().includes('client') ? 'Client' : 'Vendor';
             
             block.querySelectorAll('.member-name-input').forEach(input => {
@@ -147,8 +147,9 @@ async function generateMinutes() {
                 }
             });
         });
+        // ★データ収集はここまで★
 
-        // 3. リクエスト送信
+        // 3. リクエスト送信 (この後、APIを叩く処理に続く)
         const payload = {
             vtt_text: vttText,
             meeting_date: meetingDate,
