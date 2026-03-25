@@ -146,11 +146,25 @@ async function generateMinutes() {
     btn.innerText = '議事録を生成中... (約30〜60秒)';
 
     try {
-        // --- データ収集部分 ---
-        const dateVal = document.getElementById('meeting-date').value;
+        // --- ★ここから修正：5つのパーツを合体させる ---
+        const dateInput = document.getElementById('meeting-date').value; // "2026-03-25"
+        if (!dateInput) {
+            alert('開催日時を選択してください。');
+            btn.disabled = false;
+            btn.innerText = '議事録を生成する';
+            return;
+        }
 
-        // YYYY-MM-DDTHH:mm を YYYY/MM/DD HH:mm に置換（簡易版）
-        const meetingDate = dateVal.replace(/-/g, '/').replace('T', ' ');
+        const startH = document.getElementById('start-hour').value;
+        const startM = document.getElementById('start-min').value;
+        const endH = document.getElementById('end-hour').value;
+        const endM = document.getElementById('end-min').value;
+
+        // ハイフンをスラッシュに変えて、時間を繋げる
+        // 例: "2026/03/25 10:00 - 11:15"
+        const formattedDate = dateInput.replace(/-/g, '/');
+        const meetingDate = `${formattedDate} ${startH}:${startM} - ${endH}:${endM}`;
+        // --- ★修正ここまで ---
 
         const agendas = Array.from(document.querySelectorAll('.agenda-item'))
                             .map(input => input.value.trim())
