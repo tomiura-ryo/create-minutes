@@ -4,6 +4,9 @@
 const API_URL = "YOUR_CLOUD_RUN_FUNCTIONS_URL";
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 時・分のプルダウンを生成
+    initTimeSelects();
+
     // 初期表示の生成（1つずつ）
     addAgendaRow();
     addMemberInput('dd-member-list');
@@ -14,6 +17,27 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('generate-btn').addEventListener('click', generateMinutes);
     document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
 });
+
+function initTimeSelects() {
+    const hours = Array.from({length: 24}, (_, i) => i.toString().padStart(2, '0'));
+    const mins = ['00', '15', '30', '45'];
+
+    const hSelects = ['start-hour', 'end-hour'];
+    const mSelects = ['start-min', 'end-min'];
+
+    hSelects.forEach(id => {
+        const el = document.getElementById(id);
+        hours.forEach(h => el.add(new Option(h, h)));
+    });
+    mSelects.forEach(id => {
+        const el = document.getElementById(id);
+        mins.forEach(m => el.add(new Option(m, m)));
+    });
+    
+    // デフォルト値（例：10:00 〜 11:00）
+    document.getElementById('start-hour').value = '10';
+    document.getElementById('end-hour').value = '11';
+}
 
 /**
  * アジェンダ行を追加
@@ -82,6 +106,20 @@ async function getVttText() {
     return rawText;
 }
 
+// データ収集 (generateMinutes関数内)
+async function generateMinutes() {
+    // ... バリデーション ...
+
+    // 日付と各プルダウンの値を結合して「2026/03/25 10:00 - 11:00」の形式にする
+    const date = document.getElementById('meeting-date').value.replace(/-/g, '/');
+    const sH = document.getElementById('start-hour').value;
+    const sM = document.getElementById('start-min').value;
+    const eH = document.getElementById('end-hour').value;
+    const eM = document.getElementById('end-min').value;
+    
+    const meetingDate = `${date} ${sH}:${sM} - ${eH}:${eM}`;
+}
+
 function copyToClipboard() {
     const outputText = document.getElementById('output-text').innerText;
     if (!outputText) return;
@@ -113,7 +151,7 @@ async function generateMinutes() {
 
         // YYYY-MM-DDTHH:mm を YYYY/MM/DD HH:mm に置換（簡易版）
         const meetingDate = dateVal.replace(/-/g, '/').replace('T', ' ');
-        
+
         const agendas = Array.from(document.querySelectorAll('.agenda-item'))
                             .map(input => input.value.trim())
                             .filter(v => v !== '');

@@ -33,6 +33,15 @@ h2 {
     border-bottom: 2px solid #f0f4f8;
 }
 
+/* 追加：セレクトボックスのスタイルをinputに合わせる */
+select {
+    padding: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
 /* --- フォーム共通 --- */
 .form-group {
     margin-bottom: 20px;
@@ -73,6 +82,12 @@ select {
     border: 1px solid #dcdcdc;
     border-radius: 6px;
     box-sizing: border-box;
+}
+
+/* 開催日時の行だけgapを少し狭める */
+.input-row span {
+    font-size: 14px;
+    color: #666;
 }
 
 /* ★氏名入力欄：長すぎないよう50%に制限★ */

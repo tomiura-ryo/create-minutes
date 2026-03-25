@@ -18,14 +18,21 @@
             <section class="card">
                 <h2>1. 基本情報</h2>
                 <div class="form-group">
-                    <label for="meeting-date">開催日時</label>
-                    <input type="datetime-local" id="meeting-date">
+                    <label>開催日時</label>
+                    <div class="input-row">
+                        <input type="date" id="meeting-date" style="flex: 2;">
+                        
+                        <select id="start-hour" style="flex: 1;"></select>時
+                        <select id="start-min" style="flex: 1;"></select>分
+                        <span>〜</span>
+                        <select id="end-hour" style="flex: 1;"></select>時
+                        <select id="end-min" style="flex: 1;"></select>分
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label>アジェンダ</label>
-                    <div id="agenda-container">
-                        </div>
+                    <div id="agenda-container"></div>
                     <button type="button" class="btn-add" id="add-agenda">+ アジェンダを追加</button>
                 </div>
             </section>
