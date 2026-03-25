@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>議事録生成ツール (Gemini 2.0 Flash)</title>
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>会議議事録 生成アシスタント</h1>
+            <p>基本情報とVTTを入力して、高品質なMarkdownを生成します。</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>1. 基本情報</h2>
+                <div class="form-group">
+                    <label for="meeting-date">開催日時</label>
+                    <input type="text" id="meeting-date" placeholder="例: 2026/03/25(水) 10:00 - 11:00">
+                </div>
+                
+                <div class="form-group">
+                    <label>アジェンダ</label>
+                    <div id="agenda-container">
+                        <div class="input-row">
+                            <input type="text" class="agenda-item" placeholder="議題を入力">
+                            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add" id="add-agenda">+ アジェンダを追加</button>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>2. 出席メンバー</h2>
+                <div id="member-container">
+                    </div>
+                <button type="button" class="btn-add" id="add-member">+ メンバーを追加</button>
+            </section>
+
+            <section class="card">
+                <h2>3. 文字起こし (VTT)</h2>
+                <div class="form-group">
+                    <label for="vtt-file">VTTファイルをアップロード</label>
+                    <input type="file" id="vtt-file" accept=".vtt">
+                </div>
+                <div class="form-group">
+                    <label for="vtt-raw">またはテキストを直接貼り付け</label>
+                    <textarea id="vtt-raw" rows="8" placeholder="WEBVTT..."></textarea>
+                </div>
+            </section>
+
+            <div class="actions">
+                <button id="generate-btn" class="btn-primary">議事録を生成する</button>
+            </div>
+
+            <section class="card result-area" id="result-section" style="display: none;">
+                <div class="result-header">
+                    <h2>生成された議事録 (Markdown)</h2>
+                    <button id="copy-btn" class="btn-secondary">クリップボードにコピー</button>
+                </div>
+                <pre id="output-text"></pre>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
