@@ -36,9 +36,22 @@
 
             <section class="card">
                 <h2>2. 出席メンバー</h2>
-                <div id="member-container">
-                    </div>
-                <button type="button" class="btn-add" id="add-member">+ メンバーを追加</button>
+                
+                <div class="org-group dd-group">
+                    <label>自社 (DD) ※「様」なし</label>
+                    <div id="dd-member-list" class="member-list">
+                        </div>
+                    <button type="button" class="btn-add-mini" onclick="addMemberInput('dd-member-list')">+ メンバー追加</button>
+                </div>
+
+                <hr class="divider">
+
+                <div class="org-group external-group">
+                    <label>社外 (Client / Vendor) ※「様」あり</label>
+                    <div id="external-org-container">
+                        </div>
+                    <button type="button" class="btn-add" id="add-external-org">+ 組織を追加 (Client/Vendor名)</button>
+                </div>
             </section>
 
             <section class="card">

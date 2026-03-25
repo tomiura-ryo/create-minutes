@@ -1,60 +1,78 @@
-// --- 設定：デプロイした Cloud Run Functions の URL に書き換えてください ---
-const API_URL = "https://YOUR-REGION-YOUR-PROJECT.a.run.app/handle_summarize";
+/**
+ * 設定: Cloud Run Functions の URL をここに貼り付けてください
+ * 例: https://us-central1-ga-export-262309.cloudfunctions.net/handle_summarize
+ */
+const API_URL = "YOUR_CLOUD_RUN_FUNCTIONS_URL";
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 初期状態でメンバー入力欄を1つ追加しておく
-    addMemberRow();
+    // 1. 初期表示で自社(DD)の入力欄を1つ用意
+    addMemberInput('dd-member-list');
 
-    // イベントリスナーの設定
+    // 2. イベントリスナーの登録
     document.getElementById('add-agenda').addEventListener('click', addAgendaRow);
-    document.getElementById('add-member').addEventListener('click', addMemberRow);
+    document.getElementById('add-external-org').addEventListener('click', addExternalOrgBlock);
     document.getElementById('generate-btn').addEventListener('click', generateMinutes);
     document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
+
+    // アジェンダも初期状態で1つ追加
+    addAgendaRow();
 });
 
-// アジェンダ行の追加
+/**
+ * アジェンダ行を追加する
+ */
 function addAgendaRow() {
     const container = document.getElementById('agenda-container');
     const div = document.createElement('div');
     div.className = 'input-row';
     div.innerHTML = `
-        <input type="text" class="agenda-item" placeholder="議題を入力">
+        <input type="text" class="agenda-item" placeholder="議題を入力 (例: GA4計測について)">
         <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
     `;
     container.appendChild(div);
 }
 
-// メンバー行の追加 (DD / Client / Vendor の切り替え対応)
-function addMemberRow() {
-    const container = document.getElementById('member-container');
+/**
+ * メンバー個人の入力チップ（氏名）を追加する
+ * @param {string} containerId - 追加先のDOM ID
+ */
+function addMemberInput(containerId) {
+    const container = document.getElementById(containerId);
     const div = document.createElement('div');
-    div.className = 'input-row member-row';
+    div.className = 'member-input-wrapper';
     div.innerHTML = `
-        <select class="member-type" onchange="toggleOrgInput(this)">
-            <option value="Client">Client</option>
-            <option value="DD">DD (自社)</option>
-            <option value="Vendor">Vendor (他社)</option>
-        </select>
-        <input type="text" class="member-org" placeholder="組織名" style="display:none;">
-        <input type="text" class="member-name" placeholder="氏名">
+        <input type="text" class="member-name-input" placeholder="氏名">
         <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
     `;
     container.appendChild(div);
 }
 
-// Vendorが選ばれた時だけ組織名入力を表示
-function toggleOrgInput(select) {
-    const orgInput = select.parentElement.querySelector('.member-org');
-    if (select.value === 'Vendor') {
-        orgInput.style.display = 'block';
-        orgInput.placeholder = 'ベンダー社名';
-    } else {
-        orgInput.style.display = 'none';
-        orgInput.value = ''; // Client/DDの場合は空にする
-    }
+/**
+ * 社外（Client/Vendor）の組織ブロックを追加する
+ */
+function addExternalOrgBlock() {
+    const container = document.getElementById('external-org-container');
+    const orgId = 'org-' + Date.now(); // ユニークなIDを生成
+    const div = document.createElement('div');
+    div.className = 'external-org-block';
+    div.innerHTML = `
+        <div class="input-row">
+            <input type="text" class="org-name-input" placeholder="会社名 (例: Client, 〇〇社)">
+            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">この組織を削除</button>
+        </div>
+        <div id="${orgId}" class="member-list"></div>
+        <div class="list-footer">
+            <span class="btn-add-mini" onclick="addMemberInput('${orgId}')">+ メンバーを追加</span>
+        </div>
+    `;
+    container.appendChild(div);
+    // 最初の一人分を自動追加
+    addMemberInput(orgId);
 }
 
-// VTTファイルの読み込み処理
+/**
+ * VTTテキストを取得する（ファイル優先、なければテキストエリア）
+ */
 async function getVttText() {
     const fileInput = document.getElementById('vtt-file');
     const rawText = document.getElementById('vtt-raw').value;
@@ -65,53 +83,72 @@ async function getVttText() {
     return rawText;
 }
 
-// クリップボードコピー
+/**
+ * クリップボードにコピー
+ */
 function copyToClipboard() {
-    const text = document.getElementById('output-text').innerText;
-    navigator.clipboard.writeText(text).then(() => {
+    const outputText = document.getElementById('output-text').innerText;
+    if (!outputText) return;
+
+    navigator.clipboard.writeText(outputText).then(() => {
         const btn = document.getElementById('copy-btn');
-        btn.innerText = 'コピーしました！';
-        setTimeout(() => btn.innerText = 'クリップボードにコピー', 2000);
+        const originalText = btn.innerText;
+        btn.innerText = 'コピー完了！';
+        setTimeout(() => btn.innerText = originalText, 2000);
     });
 }
 
-// --- メイン処理：API送信 ---
+/**
+ * メイン処理: 入力情報を収集してAPIへ送信
+ */
 async function generateMinutes() {
     const btn = document.getElementById('generate-btn');
-    const outputSection = document.getElementById('result-section');
+    const resultSection = document.getElementById('result-section');
     const outputText = document.getElementById('output-text');
 
-    // ボタンの無効化（二重送信防止）
+    // 1. バリデーション
+    const vttText = await getVttText();
+    if (!vttText) {
+        alert('文字起こしデータ(VTT)を入力またはアップロードしてください。');
+        return;
+    }
+
+    // 2. 処理開始状態へ
     btn.disabled = true;
-    btn.innerText = '生成中... (30秒ほどかかります)';
+    btn.innerText = '議事録を生成中... (約30〜60秒)';
 
     try {
-        const vttText = await getVttText();
-        if (!vttText) {
-            alert('VTTデータまたはファイルを入力してください。');
-            return;
-        }
-
-        // データの収集
+        // --- データ収集 ---
         const meetingDate = document.getElementById('meeting-date').value;
         const agendas = Array.from(document.querySelectorAll('.agenda-item'))
-                            .map(input => input.value)
+                            .map(input => input.value.trim())
                             .filter(v => v !== '');
-        
-        const members = Array.from(document.querySelectorAll('.member-row')).map(row => {
-            const type = row.querySelector('.member-type').value;
-            let org = type; // Client or DD
-            if (type === 'Vendor') {
-                org = row.querySelector('.member-org').value || 'Vendor';
-            }
-            return {
-                name: row.querySelector('.member-name').value,
-                org: org,
-                type: type
-            };
-        }).filter(m => m.name !== '');
 
-        // JSONリクエストの作成
+        const members = [];
+
+        // 自社(DD)メンバーの収集
+        document.querySelectorAll('#dd-member-list .member-name-input').forEach(input => {
+            const name = input.value.trim();
+            if (name) {
+                members.push({ name: name, org: 'DD', type: 'DD' });
+            }
+        });
+
+        // 社外(Client/Vendor)メンバーの収集
+        document.querySelectorAll('.external-org-block').forEach(block => {
+            const orgName = block.querySelector('.org-name-input').value.trim() || '社外';
+            // 組織名に "Client" が含まれる場合は Client、それ以外は Vendor と判定
+            const type = orgName.toLowerCase().includes('client') ? 'Client' : 'Vendor';
+            
+            block.querySelectorAll('.member-name-input').forEach(input => {
+                const name = input.value.trim();
+                if (name) {
+                    members.push({ name: name, org: orgName, type: type });
+                }
+            });
+        });
+
+        // 3. リクエスト送信
         const payload = {
             vtt_text: vttText,
             meeting_date: meetingDate,
@@ -119,24 +156,26 @@ async function generateMinutes() {
             members: members
         };
 
-        // API呼び出し
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        if (!response.ok) throw new Error('サーバーエラーが発生しました。');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'API実行エラー');
+        }
 
         const result = await response.json();
-        
-        // 結果の表示
+
+        // 4. 結果の反映
         outputText.innerText = result.markdown;
-        outputSection.style.display = 'block';
-        outputSection.scrollIntoView({ behavior: 'smooth' });
+        resultSection.style.display = 'block';
+        resultSection.scrollIntoView({ behavior: 'smooth' });
 
     } catch (error) {
-        console.error(error);
+        console.error('Error:', error);
         alert('エラーが発生しました: ' + error.message);
     } finally {
         btn.disabled = false;

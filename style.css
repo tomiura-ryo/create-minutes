@@ -114,3 +114,50 @@ pre {
     font-family: 'Courier New', Courier, monospace;
     font-size: 14px;
 }
+
+/* 追加・修正分 */
+.org-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+.dd-group { border-left: 4px solid #1a73e8; }
+.external-group { border-left: 4px solid #f59e0b; }
+
+.member-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.member-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding-right: 5px;
+}
+.member-input-wrapper input {
+    border: none;
+    width: 120px;
+    padding: 5px 10px;
+}
+.btn-add-mini {
+    color: #1a73e8;
+    font-size: 13px;
+    cursor: pointer;
+}
+.divider {
+    margin: 20px 0;
+    border: none;
+    border-top: 1px dashed #ccc;
+}
+.external-org-block {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
