@@ -54,6 +54,48 @@ label {
     font-size: 14px;
 }
 
+/* --- style.css (抜粋・上書き) --- */
+
+/* 開催日時の行専用の調整 */
+.time-select-group {
+    justify-content: flex-start; /* 左寄せにする */
+    gap: 8px; /* 間隔を少し詰める */
+}
+
+/* 日付入力：少し広めにする */
+#meeting-date {
+    width: 160px;
+    flex: none; /* 勝手に広がらないように固定 */
+}
+
+/* ★時間プルダウン：数字2桁に最適な幅に固定★ */
+select {
+    width: 70px; /* コンパクトな幅に固定 */
+    flex: none;
+    padding: 8px 30px 8px 10px; /* 右側に矢印の余白を確保 */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+/* 〜（波線）の前後 */
+.time-select-group span {
+    margin: 0 2px;
+    color: #666;
+    font-weight: bold;
+}
+
+/* 日付選択のアイコンも右側に寄せる */
+input[type="date"] {
+    width: 160px;
+    flex: none;
+    padding: 8px 10px;
+}
+
 /* style.css の 50行目あたり、既存の指定に追加 */
 input[type="text"], 
 input[type="datetime-local"], /* これを追加 */
