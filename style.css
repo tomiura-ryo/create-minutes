@@ -54,7 +54,7 @@ input[type="text"], textarea, select {
     gap: 10px;
     margin-bottom: 10px;
     align-items: center;
-    width: 100%; /* 横幅いっぱい */
+    width: 100%;
 }
 
 .btn-add {
@@ -186,19 +186,21 @@ pre {
     background: #fecaca;
 }
 
-/* 氏名入力欄も横幅いっぱいに広げる */
+/* ★氏名入力欄の長さ調整★ */
 .member-name-input {
-    flex: 1; /* 残りのスペースをすべて使う */
+    width: 45%; /* 親（横幅）の約半分にする */
+    min-width: 150px; /* あまりに狭くなりすぎないように最低値を設定 */
     padding: 10px;
     border: 1px solid #dcdcdc;
     border-radius: 6px;
+    background: #fff;
+    /* もし右側に余白を持たせたい場合は margin-right を設定 */
 }
 
-/* 不要になった古いラッパーを削除または無効化 */
-.member-input-wrapper {
-    display: flex;
-    width: 100%; /* ここを100%に */
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+/* 不要になった古いラッパーを完全に削除 */
+.member-input-wrapper { display: none !important; }
+
+/* 会社名入力欄 (既存の.form-groupを使う) */
+.external-org-block .form-group input {
+    width: 100%; /* 親いっぱい */
 }

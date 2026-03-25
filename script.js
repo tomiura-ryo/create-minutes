@@ -57,10 +57,11 @@ function addExternalOrgBlock() {
     div.className = 'external-org-block';
     
     div.innerHTML = `
-        <button type="button" class="btn-org-remove" onclick="this.closest('.external-org-block').remove()" title="この組織を削除">✕</button>
-        <div class="form-group">
-            <input type="text" class="org-name-input" placeholder="会社名 (例: Client, 〇〇社)">
+        <div class="input-row">
+            <input type="text" class="org-name-input" placeholder="会社名">
+            <button type="button" class="btn-org-remove" onclick="this.closest('.external-org-block').remove()" title="この組織を削除">✕</button>
         </div>
+
         <div id="${orgId}"></div> 
         <div class="list-footer">
             <span class="btn-add-mini" onclick="addMemberInput('${orgId}')">+ メンバーを追加</span>
