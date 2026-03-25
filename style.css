@@ -45,6 +45,18 @@ label {
     font-size: 14px;
 }
 
+/* style.css の 50行目あたり、既存の指定に追加 */
+input[type="text"], 
+input[type="datetime-local"], /* これを追加 */
+textarea, 
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
 /* --- ★重要：入力行の共通横並びスタイル --- */
 .input-row {
     display: flex;

@@ -108,7 +108,12 @@ async function generateMinutes() {
     btn.innerText = '議事録を生成中... (約30〜60秒)';
 
     try {
-        const meetingDate = document.getElementById('meeting-date').value;
+        // --- データ収集部分 ---
+        const dateVal = document.getElementById('meeting-date').value;
+
+        // YYYY-MM-DDTHH:mm を YYYY/MM/DD HH:mm に置換（簡易版）
+        const meetingDate = dateVal.replace(/-/g, '/').replace('T', ' ');
+        
         const agendas = Array.from(document.querySelectorAll('.agenda-item'))
                             .map(input => input.value.trim())
                             .filter(v => v !== '');
