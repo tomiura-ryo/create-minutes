@@ -8,14 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. 初期表示で自社(DD)の入力欄を1つ用意
     addMemberInput('dd-member-list');
 
-    // 2. イベントリスナーの登録
+    // 2. 初期表示でアジェンダの入力欄を1つだけ用意（ここ！）
+    addAgendaRow();
+
+    // 3. イベントリスナーの登録
     document.getElementById('add-agenda').addEventListener('click', addAgendaRow);
     document.getElementById('add-external-org').addEventListener('click', addExternalOrgBlock);
     document.getElementById('generate-btn').addEventListener('click', generateMinutes);
     document.getElementById('copy-btn').addEventListener('click', copyToClipboard);
-
-    // アジェンダも初期状態で1つ追加
-    addAgendaRow();
 });
 
 /**
@@ -55,10 +55,11 @@ function addExternalOrgBlock() {
     const orgId = 'org-' + Date.now(); // ユニークなIDを生成
     const div = document.createElement('div');
     div.className = 'external-org-block';
+    // 修正版：addExternalOrgBlock 関数内
     div.innerHTML = `
         <div class="input-row">
             <input type="text" class="org-name-input" placeholder="会社名 (例: Client, 〇〇社)">
-            <button type="button" class="btn-remove" onclick="this.parentElement.remove()">この組織を削除</button>
+            <button type="button" class="btn-org-remove" onclick="this.closest('.external-org-block').remove()">✕</button>
         </div>
         <div id="${orgId}" class="member-list"></div>
         <div class="list-footer">
