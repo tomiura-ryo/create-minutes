@@ -26,7 +26,7 @@ function addAgendaRow() {
     const div = document.createElement('div');
     div.className = 'input-row';
     div.innerHTML = `
-        <input type="text" class="agenda-item" placeholder="議題を入力 (例: GA4計測について)">
+        <input type="text" class="agenda-item" placeholder="議題を入力">
         <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
     `;
     container.appendChild(div);
@@ -39,7 +39,7 @@ function addAgendaRow() {
 function addMemberInput(containerId) {
     const container = document.getElementById(containerId);
     const div = document.createElement('div');
-    div.className = 'member-input-wrapper';
+    div.className = 'input-row'; // クラスを統一
     div.innerHTML = `
         <input type="text" class="member-name-input" placeholder="氏名">
         <button type="button" class="btn-remove" onclick="this.parentElement.remove()">✕</button>
@@ -52,23 +52,23 @@ function addMemberInput(containerId) {
  */
 function addExternalOrgBlock() {
     const container = document.getElementById('external-org-container');
-    const orgId = 'org-' + Date.now(); // ユニークなIDを生成
+    const orgId = 'org-' + Date.now();
     const div = document.createElement('div');
     div.className = 'external-org-block';
-    // 修正版：addExternalOrgBlock 関数内
+    
     div.innerHTML = `
-        <div class="input-row">
+        <button type="button" class="btn-org-remove" onclick="this.closest('.external-org-block').remove()" title="この組織を削除">✕</button>
+        <div class="form-group">
             <input type="text" class="org-name-input" placeholder="会社名 (例: Client, 〇〇社)">
-            <button type="button" class="btn-org-remove" onclick="this.closest('.external-org-block').remove()">✕</button>
         </div>
-        <div id="${orgId}" class="member-list"></div>
+        <div id="${orgId}"></div> 
         <div class="list-footer">
             <span class="btn-add-mini" onclick="addMemberInput('${orgId}')">+ メンバーを追加</span>
         </div>
     `;
+    
     container.appendChild(div);
-    // 最初の一人分を自動追加
-    addMemberInput(orgId);
+    addMemberInput(orgId); 
 }
 
 /**

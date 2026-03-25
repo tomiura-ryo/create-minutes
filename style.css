@@ -54,6 +54,7 @@ input[type="text"], textarea, select {
     gap: 10px;
     margin-bottom: 10px;
     align-items: center;
+    width: 100%; /* 横幅いっぱい */
 }
 
 .btn-add {
@@ -185,14 +186,19 @@ pre {
     background: #fecaca;
 }
 
-/* メンバー入力のレイアウト微調整 */
-.member-input-wrapper {
-    display: flex;
-    align-items: center;
-    background: #fff;
+/* 氏名入力欄も横幅いっぱいに広げる */
+.member-name-input {
+    flex: 1; /* 残りのスペースをすべて使う */
+    padding: 10px;
     border: 1px solid #dcdcdc;
     border-radius: 6px;
-    padding: 2px 8px;
-    margin-right: 5px;
-    margin-bottom: 5px;
+}
+
+/* 不要になった古いラッパーを削除または無効化 */
+.member-input-wrapper {
+    display: flex;
+    width: 100%; /* ここを100%に */
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
 }
